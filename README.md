@@ -1,5 +1,5 @@
 # dipOverlay
-dip hook with overlay, can bypass old anticheats
+dip hook with overlay (can bypass old anticheats)
 
 - overlay replaces endscene
 - direct2d for drawing text
