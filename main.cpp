@@ -6,6 +6,7 @@
 
 DWORD retMyDIP;
 
+
 void DIPfunc (LPDIRECT3DDEVICE9 pDevice)
 {
 	//if ( (InitOnce)||(IsKeyPressed2(DIK_ESCAPE)))
@@ -69,7 +70,7 @@ void DIPfunc (LPDIRECT3DDEVICE9 pDevice)
 	pDevice->SetRenderState(D3DRS_DEPTHBIAS, 0);
 	//pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 	if (countnum == Stride)
-	//if (Stride == 40||Stride == 44)
+	//if (Stride == 40||Stride == 44)//combata:re
 	{
 		//pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 		float bias = 1000.0f;
@@ -80,15 +81,27 @@ void DIPfunc (LPDIRECT3DDEVICE9 pDevice)
 
 	//worldtoscreen
 	if (countnum == Stride)
-	//if (Stride == 40||Stride == 44)
+	//if (Stride == 32)//wolft
 		AddModels(pDevice);
+
+
+	//retaddr wallhack example (usually not needed/remove if not used)
+	void* ReturnAddress = _AddressOfReturnAddress(); //_ReturnAddress();
+	if (!IsAddressPresent(ReturnAddress))
+		g_Vector.push_back(ReturnAddress);
+
+	pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	if (ReturnAddress != NULL && g_SelectedAddress != NULL && ReturnAddress == g_SelectedAddress)
+	{
+		pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
+	}
 
 	
 	//log models 
-	if (countnum == Stride) //numElements //vSize/100 //iDesc.Size
+	if (countnum == Stride|| ReturnAddress == g_SelectedAddress) //numElements //vSize/100 //iDesc.Size
 		if (IsKeyPressed(DIK_I)) //i key
-			Log("Stride == %d && vSize == %d && pSize == %d && decl->Type == %d && numElements == %d && vDesc.Size == %d && iDesc.Size == %d && sDesc.Height == %d", 
-				Stride, vSize, pSize, decl->Type, numElements, vDesc.Size, iDesc.Size, sDesc.Height);
+			Log("Stride == %d && vSize == %d && pSize == %d && decl->Type == %d && numElements == %d && vDesc.Size == %d && iDesc.Size == %d && sDesc.Height == %d && g_SelectedAddress == %x", 
+				Stride, vSize, pSize, decl->Type, numElements, vDesc.Size, iDesc.Size, sDesc.Height, g_SelectedAddress);
 
 	if (countnum == Stride) //numElements //vSize/100 //iDesc.Size
 	{
@@ -228,11 +241,35 @@ void drawLoop(int width, int height)
 	}
 	
 	
-	//clear less flicker bs
+	//clear less flicker (todo: real fix, instead of this bs)
 	if (timeGetTime() - astime >= 50) //40-50
 	{
 		ModelInfo.clear(); //clear
 		astime = timeGetTime();
+	}
+
+
+
+	//find return address
+	if (IsKeyPressed(DIK_RIGHT)) //RightArrow on arrow keypad
+	{
+		if (g_Index != g_Vector.size() - 1)
+		{
+			g_Index++;
+			Sleep(100);
+			g_SelectedAddress = g_Vector[g_Index];
+		}
+	}
+	if (IsKeyPressed(DIK_LEFT))
+	{
+		if (g_Index >= 0)
+		{
+			g_Index--;
+			Sleep(100);
+			g_SelectedAddress = g_Vector[g_Index];
+			if (g_Index == -1)
+				g_SelectedAddress = NULL;
+		}
 	}
 
 

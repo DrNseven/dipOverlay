@@ -119,6 +119,27 @@ VOID doDisassembleShader(LPDIRECT3DDEVICE9 pDevice, char* FileName)
 	pShader->Release();
 }
 */
+
+//=========================================================================================================================//
+
+//returnaddress method for finding models
+//#pragma intrinsic(_ReturnAddress) //Less indexes
+//#pragma intrinsic(_AddressOfReturnAddress) //Has more indexes
+
+int									g_Index = -1;
+std::vector<void*>					g_Vector;
+void*								g_SelectedAddress = NULL;
+
+bool IsAddressPresent(void* Address)
+{
+	for (auto it = g_Vector.begin(); it != g_Vector.end(); ++it)
+	{
+		if (*it == Address)
+			return true;
+	}
+	return false;
+}
+
 //=========================================================================================================================//
 
 //calc distance
